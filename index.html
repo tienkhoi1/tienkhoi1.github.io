@@ -1,1 +1,153 @@
-â
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>App Installer — Facebook</title>
+  <style>
+    :root{
+      --bg:#2f2f31;
+      --card:#4a4a4c;
+      --card-dark:#404042;
+      --accent:#2ea8ff;
+      --muted:#bfc6cc;
+      --ok:#28c76f; /* màu xanh cho iOS text */
+      --shadow: 0 6px 18px rgba(0,0,0,0.45);
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#262628 0%, #202022 100%);color:#fff}
+    .wrap{max-width:760px;margin:40px auto;padding:20px;}
+    .list-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+    .badge{min-width:44px;height:44px;border-radius:8px;background:linear-gradient(180deg,#1d74d1,#165fb6);display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:inset 0 -2px rgba(0,0,0,0.2)}
+    .title{font-size:20px;font-weight:700}
+    .card{background:linear-gradient(180deg,var(--card) 0%, var(--card-dark) 100%);border-radius:12px;padding:12px;box-shadow:var(--shadow);overflow:hidden}
+    .app-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:8px;background:rgba(0,0,0,0.06);margin-bottom:8px;cursor:pointer;user-select:none}
+    .app-row:hover{filter:brightness(1.03)}
+    .app-index{width:34px;height:34px;border-radius:8px;background:rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;font-weight:700}
+    .app-info{flex:1;min-width:0}
+    .app-name{display:flex;align-items:center;gap:10px;font-weight:700}
+    .app-icon{width:36px;height:36px;border-radius:8px;background:#1877f2;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;overflow:hidden;flex:0 0 36px}
+    .app-icon img{width:100%;height:100%;object-fit:cover;display:block}
+    .chev{margin-left:auto;color:var(--muted);font-size:18px}
+    .versions{margin-top:8px;border-radius:8px;overflow:hidden}
+    .version-row{display:flex;align-items:center;gap:12px;padding:14px;background:linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.02));border-bottom:1px solid rgba(0,0,0,0.12)}
+    .version-meta{flex:1}
+    .ver-title{font-weight:700}
+    .ver-sub{color:var(--ok);font-size:13px;margin-top:6px} /* màu xanh theo yêu cầu */
+    .install-btn{background:var(--accent);color:#063b61;border-radius:10px;padding:8px 12px;font-weight:700;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+    .install-btn:active{transform:translateY(1px)}
+    .small{font-size:13px;color:var(--muted)}
+    footer{margin-top:18px;color:var(--muted);font-size:13px}
+    /* small screens */
+    @media (max-width:520px){
+      .wrap{margin:18px;padding:12px}
+      .card{padding:10px}
+      .version-row{padding:10px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="list-header">
+      <div class="badge">1</div>
+      <div>
+        <div class="title">Danh sách ứng dụng</div>
+        <div class="small">Nhấn vào tên app để xem phiên bản và cài đặt</div>
+      </div>
+    </div>
+
+    <div class="card" id="appList">
+
+      <!-- App item: Facebook (can duplicate this block to add more apps) -->
+      <div class="app-item">
+        <div class="app-row" data-app="facebook" aria-expanded="true" onclick="toggleApp(event)">
+          <div class="app-index">2.</div>
+
+          <!-- icon lấy từ link do bạn cung cấp -->
+          <div class="app-icon" aria-hidden="true">
+            <img src="https://github.com/tienkhoi1/files-g.txt/releases/download/v1.ipa/Facebook.png" alt="Facebook icon">
+          </div>
+
+          <div class="app-info">
+            <div class="app-name">Facebook</div>
+            <!-- Dòng mô tả nhỏ phía dưới đã được xóa theo yêu cầu -->
+          </div>
+          <div class="chev" aria-hidden="true">▾</div>
+        </div>
+
+        <!-- versions container (start with one version) -->
+        <div class="versions" id="facebook-versions" style="display:block">
+          <div class="version-row">
+            <div class="version-meta">
+              <div class="ver-title">Phiên bản 523.0.0</div>
+              <div class="ver-sub">iOS 15.1 or later</div> <!-- màu xanh theo yêu cầu -->
+            </div>
+            <!-- Install button uses the itms-services link the user provided -->
+            <a class="install-btn"
+               href="itms-services://?action=download-manifest&amp;url=https://github.com/tienkhoi1/files-g.txt/releases/download/v1.ipa/Facebook-523.0.0.plist"
+               onclick="onInstallClick(event)"
+               title="Cài Facebook 523.0.0">
+              Cài đặt
+            </a>
+          </div>
+        </div>
+      </div>
+      <!-- End app item -->
+
+    </div>
+
+    <footer>
+      Lưu ý: Mở trang này trong Safari trên iPhone để cài trực tiếp. Manifest (plist) phải được truy cập qua HTTPS và có nội dung manifest hợp lệ. Để thêm app khác, sao chép phần "app-item" và chỉnh tên, phiên bản & URL manifest.
+    </footer>
+  </div>
+
+  <script>
+    // Toggle expand/collapse for an app row
+    function toggleApp(e){
+      const row = e.currentTarget || e.target.closest('.app-row');
+      if(!row) return;
+      const app = row.getAttribute('data-app');
+      const container = document.getElementById(app + '-versions');
+      if(!container) return;
+      const expanded = row.getAttribute('aria-expanded') === 'true';
+      row.setAttribute('aria-expanded', !expanded);
+      const chev = row.querySelector('.chev');
+      if(!expanded){
+        container.style.display = 'block';
+        if(chev) chev.textContent = '▾';
+      } else {
+        container.style.display = 'none';
+        if(chev) chev.textContent = '▸';
+      }
+    }
+
+    // Optional: warn user about mobile/Safari
+    function onInstallClick(e){
+      const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+      if(!isIOS){
+        e.preventDefault();
+        alert('Cài đặt chỉ hoạt động trên thiết bị iOS (mở bằng Safari). Nếu bạn đang trên iPhone, hãy mở lại trang này trong Safari và thử lại.');
+      } else {
+        // allow default behaviour (itms-services link will be handled by iOS)
+      }
+    }
+
+    // Accessibility: allow toggling with Enter/Space when focused
+    document.addEventListener('keydown', function(ev){
+      if(ev.key === 'Enter' || ev.key === ' '){
+        const active = document.activeElement;
+        if(active && active.classList.contains('app-row')){
+          ev.preventDefault();
+          active.click();
+        }
+      }
+    });
+
+    // Make app-row focusable for keyboard
+    document.querySelectorAll('.app-row').forEach(function(r){
+      r.setAttribute('tabindex','0');
+      r.style.outline = 'none';
+    });
+  </script>
+</body>
+</html>
