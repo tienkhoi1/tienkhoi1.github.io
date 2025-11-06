@@ -58,7 +58,8 @@
 
       <!-- App item: Facebook -->
       <div class="app-item">
-        <div class="app-row" data-app="facebook" aria-expanded="true" onclick="toggleApp(event)">
+        <!-- đóng mặc định: aria-expanded="false", versions ẩn, chevron chỉ hướng đóng -->
+        <div class="app-row" data-app="facebook" aria-expanded="false" onclick="toggleApp(event)">
           <div class="app-index">1.</div>
 
           <!-- icon lấy từ link do bạn cung cấp -->
@@ -69,11 +70,11 @@
           <div class="app-info">
             <div class="app-name">Facebook</div>
           </div>
-          <div class="chev" aria-hidden="true">▾</div>
+          <div class="chev" aria-hidden="true">▸</div>
         </div>
 
-        <!-- versions container -->
-        <div class="versions" id="facebook-versions" style="display:block">
+        <!-- versions container: ẩn mặc định -->
+        <div class="versions" id="facebook-versions" style="display:none">
           <div class="version-row">
             <div class="version-meta">
               <div class="ver-title">Phiên bản 523.0.0</div>
@@ -100,6 +101,7 @@
   <script>
     // Toggle expand/collapse for an app row
     function toggleApp(e){
+      // find the nearest .app-row (in case user clicked child)
       const row = e.currentTarget || e.target.closest('.app-row');
       if(!row) return;
       const app = row.getAttribute('data-app');
@@ -107,6 +109,7 @@
       if(!container) return;
       const expanded = row.getAttribute('aria-expanded') === 'true';
       row.setAttribute('aria-expanded', !expanded);
+      // rotate chevron and show/hide versions
       const chev = row.querySelector('.chev');
       if(!expanded){
         container.style.display = 'block';
@@ -117,14 +120,12 @@
       }
     }
 
-    // Optional: warn user about mobile/Safari
+    // Warn user about mobile/Safari (itms-services only works in Safari on iOS)
     function onInstallClick(e){
       const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
       if(!isIOS){
         e.preventDefault();
         alert('Cài đặt chỉ hoạt động trên thiết bị iOS (mở bằng Safari). Nếu bạn đang trên iPhone, hãy mở lại trang này trong Safari và thử lại.');
-      } else {
-        // allow default behaviour
       }
     }
 
